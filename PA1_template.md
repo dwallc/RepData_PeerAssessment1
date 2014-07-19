@@ -5,13 +5,15 @@
 
 ### Loading the data
 
-```{r}
+
+```r
 activity <- read.csv(unz("activity.zip", "activity.csv"))
 ```
 
 ### Pre-processing of data
 
-```{r}
+
+```r
 # Create new variable for dates with date type
 activity$Date <- as.Date(activity$date, format = "%Y-%m-%d")
 
@@ -42,23 +44,36 @@ names(activity.mean.interval)[2] <- "mean.steps"
 
 ### Histogram of total number of steps taken per day
 
-```{r}
+
+```r
 hist(activity.day$steps, main = "Total Number of Steps Taken per Day", 
         xlab = "Number of Steps per Day")
 ```
 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3.png) 
+
 ### Mean and median total number of steps taken per day
 
-1. The mean number of steps per day is `r mean(activity.day$steps, na.rm = TRUE)`, or 10766 steps.
+1. The mean number of steps per day is 1.0766 &times; 10<sup>4</sup>, or 10766 steps.
 
-```{r}
+
+```r
 mean(activity.day$steps, na.rm = TRUE)
 ```
 
-2. The median number of steps per day is `r median(activity.day$steps, na.rm = TRUE)` steps.
+```
+## [1] 10766
+```
 
-```{r}
+2. The median number of steps per day is 10765 steps.
+
+
+```r
 median(activity.day$steps, na.rm = TRUE)
+```
+
+```
+## [1] 10765
 ```
 
 
@@ -67,23 +82,38 @@ median(activity.day$steps, na.rm = TRUE)
 
 ### Time series plot
 
-```{r}
+
+```r
 plot(activity.mean.interval$interval, activity.mean.interval$mean.steps, 
      type = "l", main = "Time Series Plot of Average Daily Activity Pattern", 
      xlab = "5-minute interval", 
      ylab = "Average number of steps taken (averaged across all days)")
 ```
 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6.png) 
+
 ### Maximum number of steps
 
-```{r}
+
+```r
 # 5-minute interval that contains the most numbe rof steps, averaged across all days
 
 activity.mean.interval[which.max(activity.mean.interval$mean.steps), 1]
+```
+
+```
+## [1] 835
+```
+
+```r
 activity.mean.interval[which.max(activity.mean.interval$mean.steps), 2]
 ```
 
-The 5-minute interval that contains the maximum number of steps, avergaed across all the days in the dataset, is the interval occuring between 8:35AM and 8:40AM. The number of steps corresonding with this interval is `r activity.mean.interval[which.max(activity.mean.interval$mean.steps), 2]` steps.
+```
+## [1] 206.2
+```
+
+The 5-minute interval that contains the maximum number of steps, avergaed across all the days in the dataset, is the interval occuring between 8:35AM and 8:40AM. The number of steps corresonding with this interval is 206.1698 steps.
 
 
 
@@ -91,15 +121,21 @@ The 5-minute interval that contains the maximum number of steps, avergaed across
 
 ### Total number of missing values
 
-```{r}
+
+```r
 sum(is.na(activity$steps))
 ```
 
-The total number of missing values in the dataset is `r sum(is.na(activity$steps))`
+```
+## [1] 2304
+```
+
+The total number of missing values in the dataset is 2304
 
 ### Replacement of missing values
 
-```{r}
+
+```r
 # Merging activity and activity.mean.interval data frames
 activity.missing <- merge(activity, activity.mean.interval, 
                           by = "interval", sort = FALSE)
@@ -118,14 +154,16 @@ activity.missing$steps[is.na(activity.missing$steps)] <-
 
 ### Creation of new dataset with missing values included
 
-```{r}
+
+```r
 activity.new <- activity.missing[, c(2, 3, 1)]
 activity.new$Date <- as.Date(activity.new$date, format = "%Y-%m-%d")
 ```
 
 ### Histogram, mean, and median of total steps taken per day
 
-```{r}
+
+```r
 # Create new data frame for total steps per day from new dataset
 activity.day.new <- aggregate(activity.new$steps, 
                               by = list(activity.new$date), sum)
@@ -136,15 +174,29 @@ names(activity.day.new)[2] <- "steps"
 hist(activity.day.new$steps, 
      main = "Total Number of steps Taken per Day (NAs Replaced)", 
      xlab = "Number of Steps per Day")
+```
 
+![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11.png) 
+
+```r
 # Mean number of steps per day
 mean(activity.day.new$steps)
+```
 
+```
+## [1] 10766
+```
+
+```r
 # Median number of steps per day
 median(activity.day.new$steps)
 ```
 
-Both the mean median total number of steps taken per day is `r mean(activity.day.new$steps)` steps. In comparison to the mean median figures calculated earlier, both the mean total number of steps per day are equivalent to one another. With regards to the median number of steps per day, the new median figure is 1.19 steps higher than the median figure calculated earlier.
+```
+## [1] 10766
+```
+
+Both the mean median total number of steps taken per day is 1.0766 &times; 10<sup>4</sup> steps. In comparison to the mean median figures calculated earlier, both the mean total number of steps per day are equivalent to one another. With regards to the median number of steps per day, the new median figure is 1.19 steps higher than the median figure calculated earlier.
 
 The impact of imputing missing data via the strategy utilized above is that the ensuing results are similar to the results generated earlier, with slightly higher frequencies overall, due to the replacement of the NAs.
 
@@ -154,7 +206,8 @@ The impact of imputing missing data via the strategy utilized above is that the 
 
 ### Create new factor variable
 
-```{r}
+
+```r
 # Copying the new dataset
 activity.new.2 <- activity.new
 
@@ -168,7 +221,8 @@ levels(activity.new.2$weekdays) <-
 
 ### Panel plot of time series plots
 
-```{r}
+
+```r
 # Create new data frame for mean steps per interval from new dataset
 activity.new.2.mean.interval <- aggregate(activity.new.2$steps, 
                                           by = list(activity.new.2$weekdays, 
@@ -185,3 +239,5 @@ xyplot(activity.new.2.mean.interval$mean.steps ~
                activity.new.2.mean.interval$weekday, layout = c(1, 2), 
        type = "l", xlab = "Interval", ylab = "Number of steps")
 ```
+
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13.png) 
